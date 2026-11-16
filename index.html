@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>World Dominion</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101b2a;color:white;font-family:Arial,sans-serif}
+header{background:#1b2c40;padding:17px;text-align:center;border-bottom:1px solid #40536a}
+h1{font-size:22px;margin:0}
+main{max-width:900px;margin:auto;padding:15px}
+h2{font-size:18px}
+#map{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.country{min-height:110px;border:2px solid #ffffff30;border-radius:12px;color:white;font-size:16px;font-weight:bold;cursor:pointer}
+.country:active{transform:scale(.97)}
+.info{margin-top:16px;background:#1b2c40;border:1px solid #40536a;padding:17px;border-radius:14px}
+.stat{display:flex;justify-content:space-between;border-bottom:1px solid #40536a;padding:9px 0}
+button#start{margin-top:15px;width:100%;padding:14px;background:#62b5ff;color:#102333;border:0;border-radius:9px;font-weight:bold;font-size:16px}
+#status{color:#a9c6e5;font-size:14px}
+@media(max-width:500px){.country{min-height:90px;font-size:14px}main{padding:10px}}
+</style>
+</head>
+<body>
+<header><h1>🌍 WORLD DOMINION</h1></header>
+<main>
+<h2>Wähle deine Nation</h2>
+<div id="map">
+<button class="country" style="background:#3979b8" onclick="select('Nordland',38,120000)">🇳🇴<br>Nordland</button>
+<button class="country" style="background:#b87542" onclick="select('Südreich',24,85000)">🟠<br>Südreich</button>
+<button class="country" style="background:#5d9b67" onclick="select('Westmark',52,160000)">🟢<br>Westmark</button>
+<button class="country" style="background:#9870bb" onclick="select('Ostoria',71,210000)">🟣<br>Ostoria</button>
+<button class="country" style="background:#c49c45" onclick="select('Inselbund',9,32000)">🟡<br>Inselbund</button>
+<button class="country" style="background:#4c9c9a" onclick="select('Zentralia',44,145000)">🔵<br>Zentralia</button>
+</div>
+<section class="info">
+<h2 id="name">Keine Nation ausgewählt</h2>
+<div class="stat"><span>Bevölkerung</span><b id="pop">–</b></div>
+<div class="stat"><span>Armee</span><b id="army">–</b></div>
+<button id="start" onclick="start()">Spiel starten</button>
+<p id="status">Wähle eine Nation aus.</p>
+</section>
+</main>
+<script>
+let nation=null;
+function select(name,pop,army){
+ nation={name,pop,army};
+ document.getElementById('name').textContent=name;
+ document.getElementById('pop').textContent=pop+' Mio.';
+ document.getElementById('army').textContent=army.toLocaleString('de-DE');
+ document.getElementById('status').textContent='Nation ausgewählt!';
+}
+function start(){
+ if(!nation){document.getElementById('status').textContent='Bitte wähle zuerst eine Nation!';return;}
+ document.getElementById('status').textContent='Du regierst jetzt '+nation.name+'! Das Spiel hat begonnen.';
+}
+</script>
+</body>
+</html>
