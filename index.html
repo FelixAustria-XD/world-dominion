@@ -7,54 +7,190 @@
 <title>World Dominion</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#101b2a;color:white;font-family:Arial,sans-serif}
-header{background:#1b2c40;padding:17px;text-align:center;border-bottom:1px solid #40536a}
-h1{font-size:22px;margin:0}
-main{max-width:900px;margin:auto;padding:15px}
-h2{font-size:18px}
-#map{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.country{min-height:110px;border:2px solid #ffffff30;border-radius:12px;color:white;font-size:16px;font-weight:bold;cursor:pointer}
-.country:active{transform:scale(.97)}
-.info{margin-top:16px;background:#1b2c40;border:1px solid #40536a;padding:17px;border-radius:14px}
-.stat{display:flex;justify-content:space-between;border-bottom:1px solid #40536a;padding:9px 0}
-button#start{margin-top:15px;width:100%;padding:14px;background:#62b5ff;color:#102333;border:0;border-radius:9px;font-weight:bold;font-size:16px}
-#status{color:#a9c6e5;font-size:14px}
-@media(max-width:500px){.country{min-height:90px;font-size:14px}main{padding:10px}}
+body{margin:0;background:#111c2a;color:#eaf2ff;font-family:Arial,sans-serif}
+header{height:58px;background:#1b2a3d;border-bottom:1px solid #34475d;
+display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+h1{font-size:19px;letter-spacing:1px;margin:0}
+.version{font-size:11px;color:#8ebce8}
+main{max-width:1250px;margin:auto;padding:14px;display:grid;
+grid-template-columns:minmax(0,1fr) 270px;gap:14px}
+.panel{background:#1b2a3d;border:1px solid #34475d;border-radius:12px;overflow:hidden}
+.maphead{padding:12px 15px;display:flex;justify-content:space-between;
+font-size:13px;border-bottom:1px solid #34475d}
+#map{width:100%;height:auto;display:block;background:#142d40;touch-action:none}
+.country{stroke:#14202c;stroke-width:.65;cursor:pointer;
+transition:filter .12s}
+.country:hover{filter:brightness(1.35)}
+.country.selected{stroke:white;stroke-width:2.2;filter:brightness(1.2)}
+.side{padding:17px}
+.side h2{margin:0 0 8px;font-size:21px}
+.muted{color:#9db0c5;font-size:13px;line-height:1.5}
+.stat{display:flex;justify-content:space-between;padding:11px 0;
+border-bottom:1px solid #34475d;font-size:13px;gap:8px}
+.stat strong{text-align:right}
+button{border:0;border-radius:9px;padding:12px;background:#64b5f6;
+color:#102236;font-weight:bold;cursor:pointer}
+#start{width:100%;margin-top:17px}
+#status{margin-top:13px;font-size:12px;color:#a9c9e9;line-height:1.5}
+#loading{padding:25px;text-align:center;color:#b8cce0}
+.mapbuttons{display:flex;gap:7px}
+.mapbuttons button{padding:7px 12px}
+footer{text-align:center;color:#8296ac;font-size:11px;padding:10px}
+@media(max-width:720px){
+ main{grid-template-columns:1fr;padding:9px}
+ .side{order:2}
+ h1{font-size:17px}
+ .maphead{font-size:12px}
+}
 </style>
 </head>
 <body>
-<header><h1>🌍 WORLD DOMINION</h1></header>
+<header>
+<h1>🌍 WORLD DOMINION</h1>
+<span class="version">BETA 0.2</span>
+</header>
+
 <main>
-<h2>Wähle deine Nation</h2>
-<div id="map">
-<button class="country" style="background:#3979b8" onclick="select('Nordland',38,120000)">🇳🇴<br>Nordland</button>
-<button class="country" style="background:#b87542" onclick="select('Südreich',24,85000)">🟠<br>Südreich</button>
-<button class="country" style="background:#5d9b67" onclick="select('Westmark',52,160000)">🟢<br>Westmark</button>
-<button class="country" style="background:#9870bb" onclick="select('Ostoria',71,210000)">🟣<br>Ostoria</button>
-<button class="country" style="background:#c49c45" onclick="select('Inselbund',9,32000)">🟡<br>Inselbund</button>
-<button class="country" style="background:#4c9c9a" onclick="select('Zentralia',44,145000)">🔵<br>Zentralia</button>
-</div>
-<section class="info">
-<h2 id="name">Keine Nation ausgewählt</h2>
-<div class="stat"><span>Bevölkerung</span><b id="pop">–</b></div>
-<div class="stat"><span>Armee</span><b id="army">–</b></div>
-<button id="start" onclick="start()">Spiel starten</button>
-<p id="status">Wähle eine Nation aus.</p>
+<section class="panel">
+ <div class="maphead">
+  <strong>WORLD MAP</strong>
+  <div class="mapbuttons">
+   <button onclick="zoom(1.4)">+</button>
+   <button onclick="zoom(0.7)">−</button>
+   <button onclick="resetZoom()">↺</button>
+  </div>
+ </div>
+ <div id="loading">Weltkarte wird geladen...</div>
+ <svg id="map" viewBox="0 0 960 500" style="display:none"></svg>
 </section>
+
+<aside class="panel side">
+ <h2 id="countryName">Keine Auswahl</h2>
+ <p class="muted" id="description">
+ Wähle ein Land auf der Weltkarte.
+ </p>
+ <div class="stat"><span>Land-ID</span><strong id="countryId">–</strong></div>
+ <div class="stat"><span>Bevölkerung</span><strong id="population">–</strong></div>
+ <div class="stat"><span>Hauptstadt</span><strong id="capital">–</strong></div>
+ <button id="start" onclick="startGame()">Dieses Land spielen</button>
+ <div id="status">Wähle zuerst ein Land aus.</div>
+</aside>
 </main>
+
+<footer>WORLD DOMINION · Global Strategy Prototype</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <script>
-let nation=null;
-function select(name,pop,army){
- nation={name,pop,army};
- document.getElementById('name').textContent=name;
- document.getElementById('pop').textContent=pop+' Mio.';
- document.getElementById('army').textContent=army.toLocaleString('de-DE');
- document.getElementById('status').textContent='Nation ausgewählt!';
+let selected=null;
+let gameStarted=false;
+let zoomBehavior;
+let svg, mapGroup;
+
+const palette=[
+ "#3979b8","#b87542","#5d9b67","#9870bb",
+ "#c49c45","#4c9c9a","#b75d70","#6285a5",
+ "#8b9c50","#8b6aab","#4e9c83","#a66e48"
+];
+
+function colorFor(id){
+ let n=0;
+ for(const c of String(id)) n=(n*31+c.charCodeAt(0))>>>0;
+ return palette[n%palette.length];
 }
-function start(){
- if(!nation){document.getElementById('status').textContent='Bitte wähle zuerst eine Nation!';return;}
- document.getElementById('status').textContent='Du regierst jetzt '+nation.name+'! Das Spiel hat begonnen.';
+
+async function loadMap(){
+ try{
+  const [world,names]=await Promise.all([
+   d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"),
+   d3.tsv("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.tsv")
+  ]);
+
+  const nameMap=new Map(names.map(x=>[String(x.iso_n3 || x.id),x.name]));
+  const countries=topojson.feature(
+   world,world.objects.countries
+  ).features;
+
+  svg=d3.select("#map");
+  mapGroup=svg.append("g");
+
+  const projection=d3.geoNaturalEarth1()
+   .fitSize([940,480],{type:"FeatureCollection",features:countries});
+
+  const path=d3.geoPath(projection);
+
+  mapGroup.selectAll("path")
+   .data(countries)
+   .join("path")
+   .attr("class","country")
+   .attr("d",path)
+   .attr("fill",d=>colorFor(d.id))
+   .on("click",function(event,d){
+    if(event.defaultPrevented)return;
+    chooseCountry(d,nameMap);
+   });
+
+  zoomBehavior=d3.zoom()
+   .scaleExtent([1,8])
+   .on("zoom",event=>mapGroup.attr("transform",event.transform));
+
+  svg.call(zoomBehavior);
+  svg.style("display","block");
+  document.getElementById("loading").style.display="none";
+
+ }catch(error){
+  document.getElementById("loading").textContent=
+   "Karte konnte nicht geladen werden. Bitte Internetverbindung prüfen und Seite neu laden.";
+  console.error(error);
+ }
 }
+
+function chooseCountry(country,names){
+ if(selected){
+  d3.select(selected).classed("selected",false);
+ }
+
+ const element=d3.select(event.currentTarget);
+ element.classed("selected",true);
+ selected=element.node();
+
+ const name=names.get(String(country.id)) || "Land "+country.id;
+
+ document.getElementById("countryName").textContent=name;
+ document.getElementById("countryId").textContent=country.id;
+ document.getElementById("population").textContent="Noch nicht verfügbar";
+ document.getElementById("capital").textContent="Noch nicht verfügbar";
+ document.getElementById("description").textContent=
+  "Du hast "+name+" ausgewählt. Dieses Land kann deine Startnation werden.";
+ document.getElementById("status").textContent=
+  gameStarted?"Ausgewähltes Land: "+name:"Land ausgewählt!";
+}
+
+function zoom(factor){
+ if(svg&&zoomBehavior)
+  svg.transition().duration(250).call(
+   zoomBehavior.scaleBy,factor
+  );
+}
+
+function resetZoom(){
+ if(svg&&zoomBehavior)
+  svg.transition().duration(250).call(zoomBehavior.transform,d3.zoomIdentity);
+}
+
+function startGame(){
+ if(!selected){
+  document.getElementById("status").textContent=
+   "Bitte wähle zuerst ein Land!";
+  return;
+ }
+ gameStarted=true;
+ document.getElementById("status").textContent=
+  "Spiel gestartet! Deine Nation ist "+document.getElementById("countryName").textContent+".";
+ document.getElementById("start").textContent="Spiel läuft ✓";
+}
+
+loadMap();
 </script>
 </body>
 </html>
